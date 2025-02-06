@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -45,4 +47,55 @@ public static class HttpClientHelper
         
         return response;
     }
+    
+    public static async Task<TModelDto?> SendGetRequestAsync<TModelDto>(string requestUri, string token,
+        params string[] parameters)
+        where TModelDto : class
+    {
+        HttpClientHandler clientHandler=new HttpClientHandler();
+        clientHandler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        clientHandler.ServerCertificateCustomValidationCallback=(sender,cert,chain,sslPolicyErrors)=>{return true;};
+        using HttpClient client = new HttpClient(clientHandler)
+        {
+            BaseAddress = new Uri(UriHelper.BaseUri),
+            Timeout = TimeSpan.FromMinutes(2),
+            DefaultRequestVersion = HttpVersion.Version20 // Enforce HTTP/2.0 to match the HAR log
+        };
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+        client.BaseAddress=new Uri(UriHelper.BaseUri);
+            
+        client.DefaultRequestHeaders.Authorization=
+            new AuthenticationHeaderValue("Bearer",
+                token);
+        var uri = GenerateUri(requestUri, parameters);
+        HttpResponseMessage? response=null;
+        try
+        {
+            response = await client.GetAsync(uri).ConfigureAwait(false);
+
+        }
+        catch(Exception e)
+        {
+            Debug.WriteLine(e.Message,e);
+        }
+
+        if (response is not null && response.IsSuccessStatusCode)
+        {
+            return (await response.Content.ReadFromJsonAsync(typeof(TModelDto))) as TModelDto;
+        }
+
+        return null;
+    }
+
+    private static Uri GenerateUri(string requestUri, params string?[]? parameters)
+    {
+        var uri = $@"{UriHelper.BaseUri}{requestUri}";
+        return new Uri(parameters is null || !parameters.Any()
+            ? uri
+            : parameters.Aggregate(uri,
+                (current, parameter) =>
+                    current + (parameter is null ? "/null" :
+                        string.IsNullOrEmpty(parameter.ToString()) ? string.Empty : $@"/{parameter.ToString()}")));
+    }
+
 }
