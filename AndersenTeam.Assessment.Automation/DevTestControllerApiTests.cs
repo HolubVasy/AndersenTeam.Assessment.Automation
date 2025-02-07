@@ -21,9 +21,8 @@ namespace AndersenTeam.Assessment.Automation
             RolesEnum role)
         {
             var uri = Path.Combine(UriHelper.BaseUri, UriHelper.RoleValidationUri);
-            var result = await HttpClientHelper.SendGetRequestAsync<ResultModelWithoutData>(
+            var result = await HttpClientHelper.SendGetRequestAnonymousAsync<ResultModelWithoutData>(
                 uri,
-                BearerTokenHelper.GetBearerToken(role),
                 employeeId,
                 level.ToString());
             

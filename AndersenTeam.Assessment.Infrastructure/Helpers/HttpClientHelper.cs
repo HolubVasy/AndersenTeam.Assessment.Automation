@@ -48,7 +48,7 @@ public static class HttpClientHelper
         return response;
     }
     
-    public static async Task<TModelDto?> SendGetRequestAsync<TModelDto>(string requestUri, string token,
+    public static async Task<TModelDto?> SendGetRequestAnonymousAsync<TModelDto>(string requestUri, 
         params string[] parameters)
         where TModelDto : class
     {
@@ -63,10 +63,6 @@ public static class HttpClientHelper
         };
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
         client.BaseAddress=new Uri(UriHelper.BaseUri);
-            
-        client.DefaultRequestHeaders.Authorization=
-            new AuthenticationHeaderValue("Bearer",
-                token);
         var uri = GenerateUri(requestUri, parameters);
         HttpResponseMessage? response=null;
         try
