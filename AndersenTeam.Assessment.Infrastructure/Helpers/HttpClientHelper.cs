@@ -52,27 +52,18 @@ public static class HttpClientHelper
         params string[] parameters)
         where TModelDto : class
     {
-        HttpClientHandler clientHandler=new HttpClientHandler();
-        clientHandler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-        clientHandler.ServerCertificateCustomValidationCallback=(sender,cert,chain,sslPolicyErrors)=>{return true;};
-        using HttpClient client = new HttpClient(clientHandler)
-        {
-            BaseAddress = new Uri(UriHelper.BaseUri),
-            Timeout = TimeSpan.FromMinutes(2),
-            DefaultRequestVersion = HttpVersion.Version20 // Enforce HTTP/2.0 to match the HAR log
-        };
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
-        client.BaseAddress=new Uri(UriHelper.BaseUri);
+        using HttpClient client = GetHttpClient();
+        client.BaseAddress = new Uri(UriHelper.BaseUri);
         var uri = GenerateUri(requestUri, parameters);
-        HttpResponseMessage? response=null;
+        HttpResponseMessage? response = null;
         try
         {
             response = await client.GetAsync(uri).ConfigureAwait(false);
 
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            Debug.WriteLine(e.Message,e);
+            Debug.WriteLine(e.Message, e);
         }
 
         if (response is not null && response.IsSuccessStatusCode)
@@ -81,6 +72,20 @@ public static class HttpClientHelper
         }
 
         return null;
+    }
+
+    private static HttpClient GetHttpClient()
+    {
+        HttpClientHandler clientHandler = new HttpClientHandler();
+        clientHandler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+        HttpClient client = new HttpClient(clientHandler)
+        {
+            Timeout = TimeSpan.FromMinutes(2),
+            DefaultRequestVersion = HttpVersion.Version20 // Enforce HTTP/2.0 to match the HAR log
+        };
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+        return client;
     }
 
     private static Uri GenerateUri(string requestUri, params string?[]? parameters)
