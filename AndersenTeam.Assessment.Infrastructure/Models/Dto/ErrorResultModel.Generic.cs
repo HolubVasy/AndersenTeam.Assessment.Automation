@@ -1,4 +1,5 @@
 ﻿using Andersen.Infrastructure.API.Interfaces;
+using AndersenTeam.Assessment.Infrastructure.Models;
 using AndersenTeam.Assessment.Infrastructure.Models.Dto;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
