@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Andersen.Infrastructure.API.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Andersen.Infrastructure.API.Models
+namespace AndersenTeam.Assessment.Infrastructure.Models.Dto
 {
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class ErrorResultModel : ErrorResultModel<ErrorCode>

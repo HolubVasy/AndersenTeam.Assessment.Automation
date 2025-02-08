@@ -1,4 +1,4 @@
-using Andersen.Infrastructure.API.Models;
+using AndersenTeam.Assessment.Infrastructure.Models.Dto;
 using Assessment.Common.Enums;
 
 namespace Assessment.Common.Models.DTOs.Result;

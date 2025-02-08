@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Andersen.Infrastructure.API.Models
+namespace AndersenTeam.Assessment.Infrastructure.Models
 {
     public enum ErrorCode
     {

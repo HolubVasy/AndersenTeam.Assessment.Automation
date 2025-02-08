@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Andersen.Infrastructure.API.Interfaces;
+﻿using Andersen.Infrastructure.API.Interfaces;
+using AndersenTeam.Assessment.Infrastructure.Models.Dto;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
