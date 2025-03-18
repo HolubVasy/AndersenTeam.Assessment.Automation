@@ -10,7 +10,9 @@ namespace AndersenTeam.Assessment.Automation
 public class AssessmentControllerApiTests(AssessmentControllerApiTests.CustomWebApplicationFactory factory)
     :IClassFixture<AssessmentControllerApiTests.CustomWebApplicationFactory>
 {
-    [Theory]
+    #region Previous tests
+
+        [Theory]
     #region Test cases
     //[InlineData("08dbc343-4ede-4587-8396-6236eddc706c",TechnologyLevelEnum.M2,LanguageLevelEnum.A2,RolesEnum.ResourceManager,"")]
     [InlineData("08dbc343-4ede-4587-8396-6236eddc706c",TechnologyLevelEnum.M2,LanguageLevelEnum.A2,RolesEnum.AssociateResourceManager,"")]
@@ -410,12 +412,14 @@ public class AssessmentControllerApiTests(AssessmentControllerApiTests.CustomWeb
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);// Change based on expected result
     }
-    
-    
-    
+
+        #endregion
+
+
+
     #region Infrastructure
-    
-    private static EditAssessmentDto GetAssessmentNotEnoughEnglishDto(
+
+        private static EditAssessmentDto GetAssessmentNotEnoughEnglishDto(
         string assessmentPartId,TechnologyLevelEnum technologyLevel,
         LanguageLevelEnum languageLevel,string? reasonForSkippingEnglish=default)
     {
