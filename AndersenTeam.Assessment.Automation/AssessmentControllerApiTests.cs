@@ -2,6 +2,7 @@ using System.Net;
 using AndersenTeam.Assessment.Infrastructure.Enums;
 using AndersenTeam.Assessment.Infrastructure.Helpers;
 using AndersenTeam.Assessment.Infrastructure.Models.Dto;
+using Assessment.Common.Enums;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,7 @@ public class AssessmentControllerApiTests(AssessmentControllerApiTests.CustomWeb
 {
     #region Previous tests
 
-        [Theory]
+    [Theory]
     #region Test cases
     //[InlineData("08dbc343-4ede-4587-8396-6236eddc706c",TechnologyLevelEnum.M2,LanguageLevelEnum.A2,RolesEnum.ResourceManager,"")]
     [InlineData("08dbc343-4ede-4587-8396-6236eddc706c",TechnologyLevelEnum.M2,LanguageLevelEnum.A2,RolesEnum.AssociateResourceManager,"")]
@@ -412,8 +413,54 @@ public class AssessmentControllerApiTests(AssessmentControllerApiTests.CustomWeb
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);// Change based on expected result
     }
+    
+    [Theory(DisplayName = "Check 1C Department")]
+    [InlineData("d82e2bd8-823c-11eb-85e3-0c9d92c3d39d", 
+            TechnologyLevelEnum.S2,
+            RolesEnum.ResourceDirector)]
+    public async Task
+        GetAssessmentRequirements_1C_Department_ReturnsOnlyPdpRequirement(
+        string employeeId,TechnologyLevelEnum level,
+        RolesEnum role)
+    {
+        // Arrange
+        
+        // Act
+        var assessmentRequirements=await HttpClientHelper
+            .SendRequest<AssessmentRequirement>
+            (
+                BearerTokenHelper.GetBearerToken(role),
+                UriHelper.RequirementsAssessment,
+                employeeId.ToString(),
+                ((int)level).ToString()
+            );
 
-        #endregion
+        // Assert
+        assessmentRequirements.Should().NotBeNull();
+        assessmentRequirements.Count.Should().Be(2);
+            assessmentRequirements
+                    .Any(ar => ar.Type == AssessmentRequirementType.PdpObjectives.ToString())
+                    .Should()
+                    .BeTrue();
+            assessmentRequirements
+                    .Any(ar => ar.Type == AssessmentRequirementType.EnglishLevel.ToString())
+                    .Should()
+                    .BeTrue();
+            assessmentRequirements
+                    .Any(ar => ar.Type == AssessmentRequirementType.TechnologyCertificates.ToString())
+                    .Should()
+                    .BeFalse();
+            assessmentRequirements
+                    .Any(ar => ar.Type == AssessmentRequirementType.EmployeeRole.ToString())
+                    .Should()
+                    .BeFalse();
+            assessmentRequirements
+                    .Any(ar => ar.Type == AssessmentRequirementType.SkillSetUpdate.ToString())
+                    .Should()
+                    .BeFalse();
+    }
+
+    #endregion
 
 
 
